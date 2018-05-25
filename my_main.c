@@ -71,28 +71,7 @@ void first_pass() {
   //they must be extern variables
   extern int num_frames;
   extern char name[128];
-  //set num_frames and name to default values
-  num_frames = 1;
-  strcpy(name, "");
-  for (int i = 0; i < lastop; ++i)
-    {
-      switch (op[i].opcode)
-	{
-	case FRAMES:
-	  num_frames = op[i].op.frames.num_frames;
-   	  break;
-	case BASENAME:
-	  strcpy(name, op[i].op.basename.p->name);
-	  break;
-	case VARY:
-	  if (num_frames == 1)
-	    exit(1); 
-	}
-    }
-  if (num_frames == 1 && strcmp(name, "") == 0){
-    strcpy(name, "default");
-    printf("name has been set to 'default'");
-  }
+
 }
 
 /*======== struct vary_node ** second_pass() ==========
@@ -115,22 +94,6 @@ void first_pass() {
   appropirate value.
   ====================*/
 struct vary_node ** second_pass() {
-  double d;
-  for (int i = 0; i < lastop; ++i)
-    {
-      switch (op[i].opcode)
-	{
-	case VARY:
-	  d = (op[i].op.vary.end_val - op[i].op.vary.start_val) / (op[i].op.vary.end_frame - op[i].op.vary.start_frame);
-	  for (int j = op[i].op.vary.start_frame; j < op[i].op.vary.end_frame; ++j)
-	    {
-	      //struct vary_node* current_node = second
-	      struct vary_node* new_node = (struct vary_node*)malloc(sizeof(struct vary_node));
-	      strcpy(new_node->name, op[i].op.vary.p->name);
-	      new_node->value = op[i].op.vary.start_val;
-	    }
-	}
-    }
   return NULL;
 }
 
