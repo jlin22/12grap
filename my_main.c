@@ -115,7 +115,9 @@ void first_pass() {
   appropirate value.
   ====================*/
 struct vary_node ** second_pass() {
-  double d;
+
+     
+  double d = 0;
   struct vary_node* knobs[num_frames];
   for (int i = 0; i < num_frames; ++i)
     knobs[i] = NULL;
@@ -204,6 +206,8 @@ void print_knobs() {
   0487
   ====================*/
 void my_main() {
+  double c;
+  //constant for value
 
   int i;
   struct matrix *tmp;
@@ -259,7 +263,45 @@ void my_main() {
   clear_screen( t );
   clear_zbuffer(zb);
   first_pass();
-  struct vary_node** knobs = second_pass();
+  //second pass code
+
+ double d = 0;
+  struct vary_node* knobs[num_frames];
+  for (int i = 0; i < num_frames; ++i)
+    knobs[i] = NULL;
+  for (int i = 0; i < lastop; ++i)
+    {
+      switch (op[i].opcode)
+	{
+	case VARY:
+	  d = (op[i].op.vary.end_val - op[i].op.vary.start_val) / (op[i].op.vary.end_frame - op[i].op.vary.start_frame);
+	  for (int j = op[i].op.vary.start_frame; j <= op[i].op.vary.end_frame; ++j)
+	    {//j is the frame, i is the index for operators
+	      struct vary_node* current_node = knobs[j];
+	      //new_node to add to knobs
+	      struct vary_node* new_node = (struct vary_node*)malloc(sizeof(struct vary_node));
+	      strcpy(new_node->name, op[i].op.vary.p->name);
+	      new_node->value = op[i].op.vary.start_val;
+	      new_node->next = NULL;
+	      if (knobs[j] == NULL)
+		knobs[j] = new_node;
+	      //segmentation fault code
+	      else
+		{
+		  while (knobs[j]->next != NULL)
+		    current_node = current_node->next;
+		  current_node->next = new_node;
+		}
+	      
+	    }
+	}
+    }
+  
+  for (int j = 0; j < num_frames; ++j)
+    while (knobs[j] != NULL){
+      printf("%d : %s : %0.3f\n", j, knobs[j]->name, knobs[j]->value);
+      knobs[j] = knobs[j]->next;
+      }
   for (i=0;i<lastop;i++) {
     //printf("%d: ",i);
     switch (op[i].opcode)
