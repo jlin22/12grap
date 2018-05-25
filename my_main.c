@@ -125,27 +125,33 @@ struct vary_node ** second_pass() {
 	{
 	case VARY:
 	  d = (op[i].op.vary.end_val - op[i].op.vary.start_val) / (op[i].op.vary.end_frame - op[i].op.vary.start_frame);
-	  for (int j = op[i].op.vary.start_frame; j < op[i].op.vary.end_frame; ++j)
-	    {
-	      struct vary_node* current_node = knobs[i];
+	  for (int j = op[i].op.vary.start_frame; j <= op[i].op.vary.end_frame; ++j)
+	    {//j is the frame, i is the index for operators
+	      struct vary_node* current_node = knobs[j];
 	      //new_node to add to knobs
 	      struct vary_node* new_node = (struct vary_node*)malloc(sizeof(struct vary_node));
 	      strcpy(new_node->name, op[i].op.vary.p->name);
 	      new_node->value = op[i].op.vary.start_val;
 	      new_node->next = NULL;
-	      if (knobs[i] == NULL)
-		knobs[i] = new_node;
+	      if (knobs[j] == NULL)
+		knobs[j] = new_node;
 	      //segmentation fault code
-	      /*else
+	      else
 		{
-		  while (knobs[i]->current_node != NULL)
+		  while (knobs[j]->next != NULL)
 		    current_node = current_node->next;
 		  current_node->next = new_node;
-		  }*/
+		}
+	      
 	    }
 	}
     }
-  return NULL;
+  /*for (int i = 0; i < num_frames; ++i)
+    while(knobs[i] != NULL){
+      printf("%d : %s\n", i, knobs[i]->name);
+      knobs[i] = knobs[i]->next;
+      }*/
+  return knobs;
 }
 
 /*======== void print_knobs() ==========
