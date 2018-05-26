@@ -532,7 +532,7 @@ void my_main() {
   reset any other data structures that need it.*/
   
   
-  if (num_frames != 0)
+  if (num_frames != 1)
     {
       char *fn =(char *)malloc(sizeof(char *));
       strcpy(fn, "anim/");
@@ -559,6 +559,6 @@ void my_main() {
     }
      }
   }
-  
-  make_animation(name);
+  if (num_frames != 1)
+    make_animation(name);
 }
