@@ -483,20 +483,24 @@ void my_main() {
   reset any other data structures that need it.*/
   if (num_frames != 0)
     {
-      char* s = name;
+      char* s =(char *)malloc(sizeof(char *));
+      strncpy(s, name, strlen(name));
+      strcat(s, "/");
       char* num = (char *)malloc(sizeof(char *));
       sprintf(num, "%03d", f);
       strcat(s, num);
+      free(num);
+      strcat(s, ".png");
       //printf("%s\n", s);
       //how does make_anim work
-      //make_animation(s);
-
+      //save_extension(t, s);
+      
       //reset the screen and tmp vars
       systems = new_stack();
       tmp = new_matrix(4, 1000);
       clear_screen( t );
       clear_zbuffer(zb);
-      free(num);
+      free(s);
      }
   }
   for (int j = 0; j < num_frames; ++j)
