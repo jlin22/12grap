@@ -264,6 +264,11 @@ void my_main() {
   light[COLOR][GREEN] = 255;
   light[COLOR][BLUE] = 255;
 
+  //comment out later
+  light[COLOR][RED] = 220;
+  light[COLOR][GREEN] = 220;
+  light[COLOR][BLUE] = 220;
+
   view[0] = 0;
   view[1] = 0;
   view[2] = 1;
