@@ -118,7 +118,7 @@ struct vary_node ** second_pass() {
 
      
   double d = 0;
-  struct vary_node* knobs[num_frames];
+  struct vary_node** knobs;
   for (int i = 0; i < num_frames; ++i)
     knobs[i] = NULL;
   for (int i = 0; i < lastop; ++i)
@@ -133,7 +133,7 @@ struct vary_node ** second_pass() {
 	      //new_node to add to knobs
 	      struct vary_node* new_node = (struct vary_node*)malloc(sizeof(struct vary_node));
 	      strcpy(new_node->name, op[i].op.vary.p->name);
-	      new_node->value = op[i].op.vary.start_val;
+	      new_node->value = op[i].op.vary.start_val + d * (j - op[i].op.vary.start_frame);
 	      new_node->next = NULL;
 	      if (knobs[j] == NULL)
 		knobs[j] = new_node;
@@ -281,7 +281,7 @@ void my_main() {
 	      //new_node to add to knobs
 	      struct vary_node* new_node = (struct vary_node*)malloc(sizeof(struct vary_node));
 	      strcpy(new_node->name, op[i].op.vary.p->name);
-	      new_node->value = op[i].op.vary.start_val;
+	      new_node->value = op[i].op.vary.start_val + d * (j - op[i].op.vary.start_frame);
 	      new_node->next = NULL;
 	      if (knobs[j] == NULL)
 		knobs[j] = new_node;
@@ -291,12 +291,12 @@ void my_main() {
 		  while (knobs[j]->next != NULL)
 		    current_node = current_node->next;
 		  current_node->next = new_node;
+		  }
 		}
-	      
-	    }
 	}
-    }
-  
+	}
+
+    
   for (int j = 0; j < num_frames; ++j)
     while (knobs[j] != NULL){
       printf("%d : %s : %0.3f\n", j, knobs[j]->name, knobs[j]->value);
