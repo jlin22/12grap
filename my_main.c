@@ -33,6 +33,9 @@
   display: view the image live
   =========================*/
 
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
@@ -283,8 +286,8 @@ void my_main() {
   clear_zbuffer(zb);
   first_pass();
   //second pass code
-
- double d = 0;
+  
+  double d = 0;
   struct vary_node* knobs[num_frames];
   for (int i = 0; i < num_frames; ++i)
     knobs[i] = NULL;
@@ -323,6 +326,14 @@ void my_main() {
       printf("%d : %s : %0.3f\n", j, knobs[j]->name, knobs[j]->value);
       knobs[j] = knobs[j]->next;
       }*/
+
+  //creating directory
+  
+  struct stat st = {0};
+  char* dir = name;
+  strcat(dir, "/");
+  if (stat(dir, &st) == -1)
+    mkdir(dir, 0770);
   
   for (int f = 0; f < num_frames; ++f){
   for (i=0;i<lastop;i++) {
@@ -520,6 +531,8 @@ void my_main() {
   provided basename plus a numeric string such that the
   files will be listed in order, then clear the screen and
   reset any other data structures that need it.*/
+  
+  
   if (num_frames != 0)
     {
       char* s =(char *)malloc(sizeof(char *));
