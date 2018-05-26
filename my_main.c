@@ -178,6 +178,25 @@ void print_knobs() {
   }
 }
 
+
+double get_value(struct vary_node* n, char* name)
+{
+  struct vary_node* current_node = n;
+  while (strcmp(current_node->name, name) != 0 && current_node != NULL)
+    {
+      current_node = current_node->next;
+    }
+  if (current_node == NULL)
+    {
+      printf("current_node from get_value is NULL");
+      exit(1);
+       }
+  return current_node->value;
+}
+
+
+
+
 /*======== void my_main() ==========
   Inputs:
   Returns:
@@ -288,7 +307,8 @@ void my_main() {
 	      //segmentation fault code
 	      else
 		{
-		  while (knobs[j]->next != NULL)
+		  //find the end
+		  while (current_node->next != NULL)
 		    current_node = current_node->next;
 		  current_node->next = new_node;
 		  }
@@ -307,6 +327,7 @@ void my_main() {
   for (int f = 0; f < num_frames; ++f){
   for (i=0;i<lastop;i++) {
     //printf("%d: ",i);
+    double con;
     switch (op[i].opcode)
       {
       case SPHERE:
@@ -405,31 +426,46 @@ void my_main() {
         draw_lines(tmp, t, zb, g);
         tmp->lastcol = 0;
         break;
+
+	//knobs
+	
       case MOVE:
         xval = op[i].op.move.d[0];
         yval = op[i].op.move.d[1];
         zval = op[i].op.move.d[2];
-        printf("Move: %6.2f %6.2f %6.2f",
-               xval, yval, zval);
+        
         if (op[i].op.move.p != NULL)
           {
-            printf("\tknob: %s",op[i].op.move.p->name);
+	    con = get_value(knobs[f], op[i].op.move.p->name);
+	    xval *= con;
+	    yval *= con;
+	    zval *= con;
+            
+            //printf("\tknob: %s",op[i].op.move.p->name);
           }
+	//printf("Move: %6.2f %6.2f %6.2f", xval, yval, zval);
         tmp = make_translate( xval, yval, zval );
         matrix_mult(peek(systems), tmp);
         copy_matrix(tmp, peek(systems));
         tmp->lastcol = 0;
         break;
       case SCALE:
-        xval = op[i].op.scale.d[0];
+
+	xval = op[i].op.scale.d[0];
         yval = op[i].op.scale.d[1];
         zval = op[i].op.scale.d[2];
-        printf("Scale: %6.2f %6.2f %6.2f",
-               xval, yval, zval);
         if (op[i].op.scale.p != NULL)
           {
-            printf("\tknob: %s",op[i].op.scale.p->name);
+	    con = get_value(knobs[f], op[i].op.scale.p->name);
+	    xval *= con;
+	    yval *= con;
+	    zval *= con;
+            //printf("\tknob: %s",op[i].op.scale.p->name);
+	    
           }
+	//test
+	//printf("Scale: %6.2f %6.2f %6.2f",xval, yval, zval);
+        
         tmp = make_scale( xval, yval, zval );
         matrix_mult(peek(systems), tmp);
         copy_matrix(tmp, peek(systems));
@@ -438,12 +474,15 @@ void my_main() {
       case ROTATE:
         xval = op[i].op.rotate.axis;
         theta = op[i].op.rotate.degrees;
-        printf("Rotate: axis: %6.2f degrees: %6.2f",
-               xval, theta);
         if (op[i].op.rotate.p != NULL)
           {
-            printf("\tknob: %s",op[i].op.rotate.p->name);
+	    con = get_value(knobs[f], op[i].op.rotate.p->name);
+	    xval *= con;
+	    theta *= con;
+            //printf("\tknob: %s",op[i].op.rotate.p->name);
           }
+	//printf("Rotate: axis: %6.2f degrees: %6.2f", xval, theta);
+        
         theta*= (M_PI / 180);
         if (op[i].op.rotate.axis == 0 )
           tmp = make_rotX( theta );
@@ -490,10 +529,9 @@ void my_main() {
       sprintf(num, "%03d", f);
       strcat(s, num);
       free(num);
-      strcat(s, ".png");
       //printf("%s\n", s);
       //how does make_anim work
-      //save_extension(t, s);
+      //(t, s);
       
       //reset the screen and tmp vars
       systems = new_stack();
