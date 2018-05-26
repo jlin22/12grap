@@ -167,7 +167,7 @@ Goes through symtab and display all the knobs and their
 currnt values
 ====================*/
 void print_knobs() {
-  int i;
+  /*  int i;
 
   printf( "ID\tNAME\t\tTYPE\t\tVALUE\n" );
   for ( i=0; i < lastsym; i++ ) {
@@ -178,7 +178,7 @@ void print_knobs() {
       printf( "SYM_VALUE\t");
       printf( "%6.2f\n", symtab[i].s.value);
     }
-  }
+    }*/
 }
 
 
@@ -330,8 +330,7 @@ void my_main() {
   //creating directory
   
   struct stat st = {0};
-  char* dir = name;
-  strcat(dir, "/");
+  char* dir = "anim";
   if (stat(dir, &st) == -1)
     mkdir(dir, 0770);
   
@@ -535,28 +534,31 @@ void my_main() {
   
   if (num_frames != 0)
     {
-      char* s =(char *)malloc(sizeof(char *));
-      strncpy(s, name, strlen(name));
-      strcat(s, "/");
+      char *fn =(char *)malloc(sizeof(char *));
+      strcpy(fn, "anim/");
+      strcat(fn, name);
       char* num = (char *)malloc(sizeof(char *));
       sprintf(num, "%03d", f);
-      strcat(s, num);
+      strcat(fn, num);
       free(num);
-      //printf("%s\n", s);
-      //how does make_anim work
-      //(t, s);
-      
+      strcat(fn, ".gif");
+      printf("%s\n", fn);
+      save_extension(t, fn);
+      free(fn);
+     
       //reset the screen and tmp vars
+      free_stack(systems);
       systems = new_stack();
+      free(tmp);
       tmp = new_matrix(4, 1000);
       clear_screen( t );
       clear_zbuffer(zb);
-      free(s);
+      while (knobs[f] != NULL){
+	free(knobs[f]);
+	knobs[f] = knobs[f]->next;
+    }
      }
   }
-  for (int j = 0; j < num_frames; ++j)
-    while (knobs[j] != NULL){
-      free(knobs[j]);
-      knobs[j] = knobs[j]->next;
-    }  
+  
+  make_animation(name);
 }
