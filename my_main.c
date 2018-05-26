@@ -1,4 +1,39 @@
 /*========== my_main.c ==========
+basename giant
+frames 100
+//spinny thing
+push
+//knob
+move 250 250 0  
+rotate x -360 round
+sphere 0 -40 0 15
+scale 0.2 1 0.1
+sphere 60 -30 0 30
+sphere -60 -30 0 30
+scale 5 1 10
+scale 0.5 1 0.5
+sphere 0 -90 0 45
+scale 2 1 2
+scale 0.17 1 0.25
+sphere -50 -150 0 60
+sphere 50 -150 0 60
+scale 5.88 1 4
+pop
+//end of spinny thing
+//static bar
+//could consider making a cylinder
+//make a cylinder if you have couple minutes to wait for it to compile
+push
+box 150 250 0 10 250 10
+box 340 250 0 10 250 10
+box 150 250 0 200 10 10 
+//end of static bar
+//animate
+vary round 0 99 0 1
+
+
+
+
 
   This is the only file you need to modify in order
   to get a working mdl project (for now).
@@ -265,9 +300,9 @@ void my_main() {
   light[COLOR][BLUE] = 255;
 
   //comment out later
-  light[COLOR][RED] = 220;
-  light[COLOR][GREEN] = 220;
-  light[COLOR][BLUE] = 220;
+  light[COLOR][RED] = 0;
+  light[COLOR][GREEN] = 255;
+  light[COLOR][BLUE] = 255;
 
   view[0] = 0;
   view[1] = 0;
@@ -564,6 +599,19 @@ void my_main() {
     }
      }
   }
-  if (num_frames != 1)
-    make_animation(name);
+  if (num_frames != 1){
+    //make_animation(name);
+    int e, f;
+    char name_arg[128];
+    
+    sprintf(name_arg, "anim/%s*", name);
+    strncat(name, ".gif", 128);
+    printf("Making animation: %s\n", name);
+    f = fork();
+    if (f == 0) {
+      e = execlp("convert", "convert", "-delay", "3", "-loop", "0", name_arg, name, NULL);
+      //printf("e: %d errno: %d: %s\n", e, errno, strerror(errno));
+    }
+  }
+   
 }
