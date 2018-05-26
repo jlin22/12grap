@@ -294,14 +294,17 @@ void my_main() {
 		  }
 		}
 	}
-	}
+	}  
 
-    
+  //testing second_pass()
+  /*
   for (int j = 0; j < num_frames; ++j)
     while (knobs[j] != NULL){
       printf("%d : %s : %0.3f\n", j, knobs[j]->name, knobs[j]->value);
       knobs[j] = knobs[j]->next;
-      }
+      }*/
+  
+  for (int f = 0; f < num_frames; ++f){
   for (i=0;i<lastop;i++) {
     //printf("%d: ",i);
     switch (op[i].opcode)
@@ -472,4 +475,33 @@ void my_main() {
       } //end opcode switch
     printf("\n");
   }//end operation loop
+  //creating the frames
+  /*   At the end of each frame iteration
+  save the current screen to a file named the
+  provided basename plus a numeric string such that the
+  files will be listed in order, then clear the screen and
+  reset any other data structures that need it.*/
+  if (num_frames != 0)
+    {
+      char* s = name;
+      char* num = (char *)malloc(sizeof(char *));
+      sprintf(num, "%03d", f);
+      strcat(s, num);
+      //printf("%s\n", s);
+      //how does make_anim work
+      //make_animation(s);
+
+      //reset the screen and tmp vars
+      systems = new_stack();
+      tmp = new_matrix(4, 1000);
+      clear_screen( t );
+      clear_zbuffer(zb);
+      free(num);
+     }
+  }
+  for (int j = 0; j < num_frames; ++j)
+    while (knobs[j] != NULL){
+      free(knobs[j]);
+      knobs[j] = knobs[j]->next;
+    }  
 }
